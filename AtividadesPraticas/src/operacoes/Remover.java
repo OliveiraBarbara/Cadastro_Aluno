@@ -5,10 +5,12 @@
 package operacoes;
 
 import alunos.Aluno;
-import gui.Cadastro;
-import gui.IAtualizarFrame;
-import java.util.HashMap;
+
 import java.util.TreeSet;
+import javax.swing.JComboBox;
+import javax.swing.JRadioButton;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 
 /**
  *
@@ -16,13 +18,13 @@ import java.util.TreeSet;
  */
 public class Remover {
 
-    /*public static void removerAluno(IAtualizarFrame listagem, TreeSet<Aluno> alunos, String id, HashMap<String, TreeSet<String>> estadosCidades) {
+    public static void removerAluno(TreeSet<Aluno> alunos, String id, JTextField tNome, JRadioButton rFeminino, JRadioButton rMasculino, JTextField tCidade, JComboBox cEstado, JTable tabelaAlunos) {
         for (Aluno aluno : alunos) {
             if (aluno.getId().equals(id)) {
                 alunos.remove(aluno);
-                carregarDados();
+                Carregar.carregarDados(tNome, rFeminino, rMasculino, tCidade, cEstado, tabelaAlunos, alunos);
                 break;
             }
         }
-    }*/
+    }
 }

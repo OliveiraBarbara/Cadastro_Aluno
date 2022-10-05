@@ -13,7 +13,8 @@ import java.util.TreeSet;
  */
 public class Salvar {
 
-    public static void salvarCadastro(Aluno aluno, String nome, String endereco, String sexo, String cidade, String estado, String observacoes, TreeSet<String> interessesEscolhidos) {
+    public static Aluno salvarCadastro(String nome, String endereco, String sexo, String cidade, String estado, String observacoes, TreeSet<String> interessesEscolhidos) {
+        Aluno aluno = new Aluno(nome, endereco, sexo, cidade, estado, observacoes, interessesEscolhidos);
         if (aluno == null) {
             aluno = new Aluno(nome, endereco, sexo, cidade, estado, observacoes, interessesEscolhidos);
         } else {
@@ -28,5 +29,6 @@ public class Salvar {
                 aluno.addInteresse(interesse);
             }
         }
+        return aluno;
     }
 }

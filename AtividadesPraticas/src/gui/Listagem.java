@@ -8,8 +8,9 @@ import java.util.TreeSet;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
+import operacoes.Carregar;
 import operacoes.Editar;
+import operacoes.Remover;
 
 /**
  *
@@ -28,7 +29,9 @@ public class Listagem extends javax.swing.JFrame implements IAtualizarFrame {
         this.estadosCidades = estadosCidades;
 
         initComponents();
-        carregarEstados();
+        this.cEstado.removeAllItems();
+        this.cEstado.addItem("Todos");
+        Carregar.carregarEstados(this.cEstado, this.estadosCidades);
 
         this.tabelaAlunos.getColumnModel().getColumn(0).setMinWidth(0);
         this.tabelaAlunos.getColumnModel().getColumn(0).setMaxWidth(0);
@@ -43,7 +46,7 @@ public class Listagem extends javax.swing.JFrame implements IAtualizarFrame {
 
         });
 
-        this.carregarDados();
+        Carregar.carregarDados(this.tNome, this.rFeminino, this.rMasculino, this.tCidade, this.cEstado, this.tabelaAlunos, alunos);
 
         this.setLocationRelativeTo(null);
     }
@@ -294,13 +297,7 @@ public class Listagem extends javax.swing.JFrame implements IAtualizarFrame {
         int linha = this.tabelaAlunos.getSelectedRow();
         if (linha >= 0) {
             String id = this.tabelaAlunos.getValueAt(linha, 0).toString();
-            for (Aluno aluno : this.alunos) {
-                if (aluno.getId().equals(id)) {
-                    this.alunos.remove(aluno);
-                    this.carregarDados();
-                    break;
-                }
-            }
+            Remover.removerAluno(alunos, id, this.tNome, this.rFeminino, this.rMasculino, this.tCidade, this.cEstado, this.tabelaAlunos);
         }
     }//GEN-LAST:event_bRemoverActionPerformed
 
@@ -318,34 +315,29 @@ public class Listagem extends javax.swing.JFrame implements IAtualizarFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void tNomeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tNomeKeyReleased
-        this.carregarDados();
+        Carregar.carregarDados(this.tNome, this.rFeminino, this.rMasculino, this.tCidade, this.cEstado, this.tabelaAlunos, alunos);
     }//GEN-LAST:event_tNomeKeyReleased
 
     private void tCidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tCidadeKeyReleased
-        this.carregarDados();
+        Carregar.carregarDados(this.tNome, this.rFeminino, this.rMasculino, this.tCidade, this.cEstado, this.tabelaAlunos, alunos);
     }//GEN-LAST:event_tCidadeKeyReleased
 
     private void rFemininoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rFemininoActionPerformed
-        this.carregarDados();
+        Carregar.carregarDados(this.tNome, this.rFeminino, this.rMasculino, this.tCidade, this.cEstado, this.tabelaAlunos, alunos);
     }//GEN-LAST:event_rFemininoActionPerformed
 
     private void rMasculinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rMasculinoActionPerformed
-        this.carregarDados();
+        Carregar.carregarDados(this.tNome, this.rFeminino, this.rMasculino, this.tCidade, this.cEstado, this.tabelaAlunos, alunos);
     }//GEN-LAST:event_rMasculinoActionPerformed
 
     private void cEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cEstadoActionPerformed
-        this.carregarDados();
+        Carregar.carregarDados(this.tNome, this.rFeminino, this.rMasculino, this.tCidade, this.cEstado, this.tabelaAlunos, alunos);
     }//GEN-LAST:event_cEstadoActionPerformed
 
-    private void carregarEstados() {
-        this.cEstado.removeAllItems();
-        this.cEstado.addItem("Todos");
-
-        TreeSet<String> estados = new TreeSet<String>(this.estadosCidades.keySet());
-
-        for (String estado : estados) {
-            this.cEstado.addItem(estado);
-        }
+    @Override
+    public void atualizarFrame(Aluno aluno) {
+        this.alunos.add(aluno);
+        Carregar.carregarDados(this.tNome, this.rFeminino, this.rMasculino, this.tCidade, this.cEstado, this.tabelaAlunos, alunos);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -368,33 +360,4 @@ public class Listagem extends javax.swing.JFrame implements IAtualizarFrame {
     private javax.swing.JTextField tNome;
     private javax.swing.JTable tabelaAlunos;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public void atualizarFrame(Aluno aluno) {
-        this.alunos.add(aluno);
-        this.carregarDados();
-    }
-
-    private void carregarDados() {
-        DefaultTableModel modelo = (DefaultTableModel) this.tabelaAlunos.getModel();
-
-        while (modelo.getRowCount() > 0) {
-            modelo.removeRow(0);
-        }
-
-        String nome = this.tNome.getText().toLowerCase();
-        String sexo = this.rFeminino.isSelected() ? "Feminino" : this.rMasculino.isSelected() ? "Masculino" : "";
-        String cidade = this.tCidade.getText().toLowerCase();
-        String estado = (String) this.cEstado.getSelectedItem();
-
-        for (Aluno aluno : this.alunos) {
-            if ((nome.isBlank() || aluno.getNome().toLowerCase().contains(nome))
-                    && (sexo.isBlank() || aluno.getSexo().contains(sexo))
-                    && (cidade.isBlank() || aluno.getCidade().toLowerCase().contains(cidade))
-                    && (estado == null || estado.equals("Todos") || aluno.getEstado().contains(estado))) {
-                Object[] row = {aluno.getId(), aluno.getNome(), aluno.getSexo(), aluno.getCidade(), aluno.getEstado()};
-                modelo.addRow(row);
-            }
-        }
-    }
 }

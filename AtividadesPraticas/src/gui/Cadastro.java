@@ -1,24 +1,26 @@
 package gui;
 
-
 import alunos.Aluno;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 import javax.swing.DefaultListModel;
+import operacoes.Carregar;
+import operacoes.Interesse;
+import operacoes.Salvar;
 
 /**
  *
  * @author barbara
  */
 public class Cadastro extends javax.swing.JFrame {
-    
+
     private IAtualizarFrame listagem;
     private HashMap<String, TreeSet<String>> estadosCidades;
     private Aluno aluno;
     private TreeSet<String> interessesDisponives = new TreeSet<String>();
     private TreeSet<String> interessesEscolhidos = new TreeSet<String>();
-    
+
     /**
      * Creates new form Cadastro
      */
@@ -26,12 +28,12 @@ public class Cadastro extends javax.swing.JFrame {
         this.listagem = listagem;
         this.estadosCidades = estadosCidades;
         this.aluno = aluno;
-        
-        
-	initComponents();
-        
-        carregarEstados();
-        
+
+        initComponents();
+
+        this.cEstado.removeAllItems();
+        Carregar.carregarEstados(this.cEstado, this.estadosCidades);
+
         this.interessesDisponives.add("Redes");
         this.interessesDisponives.add("Internet");
         this.interessesDisponives.add("Segurança");
@@ -40,19 +42,19 @@ public class Cadastro extends javax.swing.JFrame {
         this.interessesDisponives.add("Inteligência Artificial");
         this.interessesDisponives.add("Qualidade de Software");
         this.interessesDisponives.add("PNL");
-        
+
         DefaultListModel<String> modelo = new DefaultListModel<String>();
         for (String interesse : this.interessesDisponives) {
             modelo.addElement(interesse);
         }
         this.listaInteressesDisponiveis.setModel(modelo);
-        
+
         if (this.aluno != null) {
             this.carregarDadosAluno();
         }
-        
-	this.setVisible(true);
-	this.setLocationRelativeTo(null);
+
+        this.setVisible(true);
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -296,116 +298,68 @@ public class Cadastro extends javax.swing.JFrame {
         List<String> interesses = this.listaInteressesEscolhido.getSelectedValuesList();
         this.interessesEscolhidos.removeAll(interesses);
         this.interessesDisponives.addAll(new TreeSet<String>(interesses));
-        
-        DefaultListModel<String> modelo = new DefaultListModel<String>();
-        for (String interesse : this.interessesEscolhidos) {
-            modelo.addElement(interesse);
-        }
-        this.listaInteressesEscolhido.setModel(modelo);
-        
-        modelo = new DefaultListModel<String>();
-        for (String interesse : this.interessesDisponives) {
-            modelo.addElement(interesse);
-        }
-        this.listaInteressesDisponiveis.setModel(modelo);
+
+        Interesse.RemoveAddInteresse(this.listaInteressesEscolhido, this.listaInteressesDisponiveis, this.interessesDisponives, this.interessesEscolhidos);
     }//GEN-LAST:event_bRemoverInteresseActionPerformed
 
     private void bCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelarActionPerformed
-       this.dispose();
+        this.dispose();
     }//GEN-LAST:event_bCancelarActionPerformed
 
     private void bAddInteresseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddInteresseActionPerformed
-	List<String> interesses = this.listaInteressesDisponiveis.getSelectedValuesList();
+        List<String> interesses = this.listaInteressesDisponiveis.getSelectedValuesList();
         this.interessesDisponives.removeAll(interesses);
         this.interessesEscolhidos.addAll(new TreeSet<String>(interesses));
-        
-        DefaultListModel<String> modelo = new DefaultListModel<String>();
-        for (String interesse : this.interessesEscolhidos) {
-            modelo.addElement(interesse);
-        }
-        this.listaInteressesEscolhido.setModel(modelo);
-        
-        modelo = new DefaultListModel<String>();
-        for (String interesse : this.interessesDisponives) {
-            modelo.addElement(interesse);
-        }
-        this.listaInteressesDisponiveis.setModel(modelo);
+
+        Interesse.RemoveAddInteresse(this.listaInteressesEscolhido, this.listaInteressesDisponiveis, this.interessesDisponives, this.interessesEscolhidos);
     }//GEN-LAST:event_bAddInteresseActionPerformed
 
     private void bSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSalvarActionPerformed
         String nome = this.tNome.getText();
         String endereco = this.tEndereco.getText();
-        String estado = (String)this.cEstado.getSelectedItem();
-        String cidade = (String)this.cCidade.getSelectedItem();
+        String estado = (String) this.cEstado.getSelectedItem();
+        String cidade = (String) this.cCidade.getSelectedItem();
         String sexo = this.rFeminino.isSelected() ? "Feminino" : this.rMasculino.isSelected() ? "Masculino" : "Não informado";
         String observacoes = this.tObservacoes.getText();
-        
-        if (this.aluno == null) {
-            this.aluno = new Aluno(nome, endereco, sexo, cidade, estado, observacoes, this.interessesEscolhidos);
-        } else {
-            this.aluno.setNome(nome);
-            this.aluno.setEndereco(endereco);
-            this.aluno.setCidade(cidade);
-            this.aluno.setEstado(estado);
-            this.aluno.setSexo(sexo);
-            this.aluno.setObservacoes(observacoes);
-            this.aluno.removeInteresse();
-            for (String interesse : this.interessesEscolhidos) {
-                this.aluno.addInteresse(interesse);
-            }
-        }
-        
+
+        aluno = Salvar.salvarCadastro(nome, endereco, sexo, cidade, estado, observacoes, this.interessesEscolhidos);
+
         this.listagem.atualizarFrame(aluno);
         this.dispose();
     }//GEN-LAST:event_bSalvarActionPerformed
 
     private void cEstadoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cEstadoItemStateChanged
-	String estado = (String) evt.getItem();
-        this.carregarCidades(estado);
+        String estado = (String) evt.getItem();
+        Carregar.carregarCidades(estado, this.cCidade, this.estadosCidades);
     }//GEN-LAST:event_cEstadoItemStateChanged
 
-    private void carregarCidades(String estado) {
-        this.cCidade.removeAllItems();
-        for (String cidade : this.estadosCidades.get(estado)) {
-            this.cCidade.addItem(cidade);
-        }
-    }
-    
-    private void carregarEstados() {
-        this.cEstado.removeAllItems();        
-        TreeSet<String> estados = new TreeSet<String>( this.estadosCidades.keySet() );
-        for (String estado : estados) {
-            this.cEstado.addItem(estado);
-        }
-    }
-    
     private void carregarDadosAluno() {
         this.tNome.setText(this.aluno.getNome());
         this.tEndereco.setText(this.aluno.getEndereco());
         this.tObservacoes.setText(this.aluno.getObservacoes());
-        
+
         this.rFeminino.setSelected(this.aluno.getSexo().equals("Feminino"));
         this.rMasculino.setSelected(this.aluno.getSexo().equals("Masculino"));
-        
+
         this.cEstado.setSelectedItem(this.aluno.getEstado());
         this.cCidade.setSelectedItem(this.aluno.getCidade());
-        
+
         this.interessesEscolhidos = new TreeSet<String>(this.aluno.getInteresses());
         this.interessesDisponives.removeAll(this.aluno.getInteresses());
-     
+
         DefaultListModel<String> modelo = new DefaultListModel<String>();
         for (String interesse : this.interessesEscolhidos) {
             modelo.addElement(interesse);
         }
         this.listaInteressesEscolhido.setModel(modelo);
-        
+
         modelo = new DefaultListModel<String>();
         for (String interesse : this.interessesDisponives) {
             modelo.addElement(interesse);
         }
         this.listaInteressesDisponiveis.setModel(modelo);
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bAddInteresse;
     private javax.swing.JButton bCancelar;
