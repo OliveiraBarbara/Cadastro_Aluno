@@ -7,7 +7,9 @@ package operacoes;
 import alunos.Aluno;
 import java.util.HashMap;
 import java.util.TreeSet;
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -56,4 +58,37 @@ public class Carregar {
             cEstado.addItem(estado);
         }
     }
+    
+    public static void carregarDadosAluno(JTextField tNome, JRadioButton rFeminino, JRadioButton rMasculino, JTextField tEndereco, JTextField tObservacoes, JComboBox cCidade, JComboBox cEstado, TreeSet<String> interessesDisponives, TreeSet<String> interessesEscolhidos, JList listaInteressesEscolhido, JList listaInteressesDisponiveis, Aluno aluno) {
+        tNome.setText(aluno.getNome());
+        tEndereco.setText(aluno.getEndereco());
+        tObservacoes.setText(aluno.getObservacoes());
+
+        rFeminino.setSelected(aluno.getSexo().equals("Feminino"));
+        rMasculino.setSelected(aluno.getSexo().equals("Masculino"));
+
+        cEstado.setSelectedItem(aluno.getEstado());
+        cCidade.setSelectedItem(aluno.getCidade());
+
+        interessesEscolhidos = new TreeSet<String>(aluno.getInteresses());
+        interessesDisponives.removeAll(aluno.getInteresses());
+
+        DefaultListModel<String> modelo = new DefaultListModel<String>();
+        for (String interesse : interessesEscolhidos) {
+            modelo.addElement(interesse);
+        }
+        listaInteressesEscolhido.setModel(modelo);
+
+        modelo = new DefaultListModel<String>();
+        for (String interesse : interessesDisponives) {
+            modelo.addElement(interesse);
+        }
+        listaInteressesDisponiveis.setModel(modelo);
+    }
 }
+
+/*Para refatorar e criar essa classe pensei no princípio de Single Responsibility Principle. 
+Visto que agreguei todos os métodos que estavam em classes diferentes em relação ao carregamento de alguma de informação em uma única classe, 
+facilitando modificações futuras e deixando ela com apenas uma responsabilidade em relação ao sistema.
+
+Além da intenção de deixar todas as operações em um único pacote auto explicativo em relação as classes que ele possui.*/

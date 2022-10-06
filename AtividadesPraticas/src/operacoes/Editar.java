@@ -25,3 +25,8 @@ public class Editar {
         }
     }
 }
+
+/*Para refatorar e criar essa classe pensei no princípio de Single Responsibility Principle. 
+Visto que criei uma classe contendo uma única responsabilidade (remover um aluno da lista) e assim ela cuidará apenas de uma funcionalidade do sistema, 
+facilitando caso precise realizar uma modificação futura.
+Além da intenção de deixar todas as operações em um único pacote auto explicativo em relação as classes que ele possui.*/

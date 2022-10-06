@@ -31,7 +31,7 @@ public class LeitorGravadorObj implements LeituraGravacao {
         if (!dir.exists()) {
             dir.mkdir();
         }
-        
+
         ObjectOutputStream file = null;
         try {
             file = new ObjectOutputStream(new FileOutputStream("./dados/alunos.txt"));
@@ -45,7 +45,7 @@ public class LeitorGravadorObj implements LeituraGravacao {
                 Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
-        
+
         System.out.println("Dados gravados com sucesso!!!");
     }
 
@@ -53,15 +53,15 @@ public class LeitorGravadorObj implements LeituraGravacao {
         TreeSet<Aluno> alunos = new TreeSet<Aluno>();
 
         File dados = new File("./dados/alunos.txt");
-        if(!dados.exists()) {
+        if (!dados.exists()) {
             return alunos;
         }
-        
+
         ObjectInputStream file = null;
         try {
             file = new ObjectInputStream(new FileInputStream(dados));
-            alunos = (TreeSet<Aluno>)file.readObject();
-        } catch(Exception ex) {
+            alunos = (TreeSet<Aluno>) file.readObject();
+        } catch (Exception ex) {
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -70,27 +70,27 @@ public class LeitorGravadorObj implements LeituraGravacao {
                 Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
-        
+
         return alunos;
     }
-    
+
     public HashMap<String, TreeSet<String>> carregarEstadosCidades() {
         HashMap<String, TreeSet<String>> estadosCidades = new HashMap<String, TreeSet<String>>();
-        
+
         File dados = new File("./dados/cidades.csv");
-        if(!dados.exists()) {
+        if (!dados.exists()) {
             return estadosCidades;
         }
-        
+
         BufferedReader file = null;
         try {
             file = new BufferedReader(new FileReader(dados));
             String linha = "";
-            while((linha = file.readLine()) != null) {
+            while ((linha = file.readLine()) != null) {
                 String[] partes = linha.split(";");
                 String estado = partes[0];
                 String cidade = partes[1];
-                
+
                 if (estadosCidades.containsKey(estado)) {
                     estadosCidades.get(estado).add(cidade);
                 } else {
@@ -99,8 +99,8 @@ public class LeitorGravadorObj implements LeituraGravacao {
                     estadosCidades.put(estado, cidades);
                 }
             }
-        
-        } catch(Exception ex) {
+
+        } catch (Exception ex) {
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -109,7 +109,13 @@ public class LeitorGravadorObj implements LeituraGravacao {
                 Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
-        
+
         return estadosCidades;
     }
 }
+
+/*Para refatorar e criar essa classe pensei no princípio de Single Responsibility Principle. 
+Visto que agreguei todos os métodos que estavam em classes diferentes em relação a leitura ou gravação em arquivo em uma única classe, 
+facilitando modificações futuras e deixando ela com apenas uma responsabilidade em relação ao sistema.
+
+Além da intenção de deixar todas as operações em relação a ler e escrever em arquivo em um único pacote auto explicativo em relação as classes que ele possui.*/

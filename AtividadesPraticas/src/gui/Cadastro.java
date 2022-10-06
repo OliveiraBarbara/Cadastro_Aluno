@@ -7,7 +7,6 @@ import java.util.TreeSet;
 import javax.swing.DefaultListModel;
 import operacoes.Carregar;
 import operacoes.Interesse;
-import operacoes.Salvar;
 
 /**
  *
@@ -50,7 +49,7 @@ public class Cadastro extends javax.swing.JFrame {
         this.listaInteressesDisponiveis.setModel(modelo);
 
         if (this.aluno != null) {
-            this.carregarDadosAluno();
+            Carregar.carregarDadosAluno(this.tNome, this.rFeminino, this.rMasculino, this.tEndereco, this.tEndereco, this.cCidade, this.cEstado, this.interessesDisponives, this.interessesEscolhidos, this.listaInteressesEscolhido, this.listaInteressesDisponiveis, this.aluno);
         }
 
         this.setVisible(true);
@@ -299,7 +298,7 @@ public class Cadastro extends javax.swing.JFrame {
         this.interessesEscolhidos.removeAll(interesses);
         this.interessesDisponives.addAll(new TreeSet<String>(interesses));
 
-        Interesse.RemoveAddInteresse(this.listaInteressesEscolhido, this.listaInteressesDisponiveis, this.interessesDisponives, this.interessesEscolhidos);
+        Interesse.removeAddInteresse(this.listaInteressesEscolhido, this.listaInteressesDisponiveis, this.interessesDisponives, this.interessesEscolhidos);
     }//GEN-LAST:event_bRemoverInteresseActionPerformed
 
     private void bCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelarActionPerformed
@@ -311,7 +310,7 @@ public class Cadastro extends javax.swing.JFrame {
         this.interessesDisponives.removeAll(interesses);
         this.interessesEscolhidos.addAll(new TreeSet<String>(interesses));
 
-        Interesse.RemoveAddInteresse(this.listaInteressesEscolhido, this.listaInteressesDisponiveis, this.interessesDisponives, this.interessesEscolhidos);
+        Interesse.removeAddInteresse(this.listaInteressesEscolhido, this.listaInteressesDisponiveis, this.interessesDisponives, this.interessesEscolhidos);
     }//GEN-LAST:event_bAddInteresseActionPerformed
 
     private void bSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSalvarActionPerformed
@@ -322,7 +321,20 @@ public class Cadastro extends javax.swing.JFrame {
         String sexo = this.rFeminino.isSelected() ? "Feminino" : this.rMasculino.isSelected() ? "Masculino" : "Não informado";
         String observacoes = this.tObservacoes.getText();
 
-        aluno = Salvar.salvarCadastro(nome, endereco, sexo, cidade, estado, observacoes, this.interessesEscolhidos);
+        if (this.aluno == null) {
+            this.aluno = new Aluno(nome, endereco, sexo, cidade, estado, observacoes, this.interessesEscolhidos);
+        } else {
+            this.aluno.setNome(nome);
+            this.aluno.setEndereco(endereco);
+            this.aluno.setCidade(cidade);
+            this.aluno.setEstado(estado);
+            this.aluno.setSexo(sexo);
+            this.aluno.setObservacoes(observacoes);
+            this.aluno.removeInteresse();
+            for (String interesse : this.interessesEscolhidos) {
+                this.aluno.addInteresse(interesse);
+            }
+        }
 
         this.listagem.atualizarFrame(aluno);
         this.dispose();
@@ -332,33 +344,6 @@ public class Cadastro extends javax.swing.JFrame {
         String estado = (String) evt.getItem();
         Carregar.carregarCidades(estado, this.cCidade, this.estadosCidades);
     }//GEN-LAST:event_cEstadoItemStateChanged
-
-    private void carregarDadosAluno() {
-        this.tNome.setText(this.aluno.getNome());
-        this.tEndereco.setText(this.aluno.getEndereco());
-        this.tObservacoes.setText(this.aluno.getObservacoes());
-
-        this.rFeminino.setSelected(this.aluno.getSexo().equals("Feminino"));
-        this.rMasculino.setSelected(this.aluno.getSexo().equals("Masculino"));
-
-        this.cEstado.setSelectedItem(this.aluno.getEstado());
-        this.cCidade.setSelectedItem(this.aluno.getCidade());
-
-        this.interessesEscolhidos = new TreeSet<String>(this.aluno.getInteresses());
-        this.interessesDisponives.removeAll(this.aluno.getInteresses());
-
-        DefaultListModel<String> modelo = new DefaultListModel<String>();
-        for (String interesse : this.interessesEscolhidos) {
-            modelo.addElement(interesse);
-        }
-        this.listaInteressesEscolhido.setModel(modelo);
-
-        modelo = new DefaultListModel<String>();
-        for (String interesse : this.interessesDisponives) {
-            modelo.addElement(interesse);
-        }
-        this.listaInteressesDisponiveis.setModel(modelo);
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bAddInteresse;
@@ -387,3 +372,6 @@ public class Cadastro extends javax.swing.JFrame {
     private javax.swing.JTextArea tObservacoes;
     // End of variables declaration//GEN-END:variables
 }
+
+
+/*Para esse frame, a intenção foi deixar ele com apenas as chamadas das funções em um pacote exclusivo para as interfaces*/

@@ -52,3 +52,5 @@ public class Principal {
 	});
     }
 }
+
+/*A intenção foi deixar a classe principal em um pacote contendo apenas ela, além de ter apenas a inicialização das variáveis com as informações dos arquivos e a chamada para iniciar a interface.*/

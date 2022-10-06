@@ -9,5 +9,4 @@ import alunos.Aluno;
 public interface IAtualizarFrame {
 
     abstract public void atualizarFrame(Aluno aluno);
-    
 }
